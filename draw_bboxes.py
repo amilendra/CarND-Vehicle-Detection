@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-image = mpimg.imread('test_images/bbox-example-image.jpg')
+image = mpimg.imread('cutouts/bbox-example-image.jpg')
 
 # Define a function that takes an image, a list of bounding boxes, 
 # and optional color tuple and line thickness as inputs

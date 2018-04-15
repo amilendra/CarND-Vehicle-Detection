@@ -94,9 +94,9 @@ for image in images:
 #print(cars)
 # Reduce the sample size because HOG features are slow to compute
 # The quiz evaluator times out after 13s of CPU time
-#sample_size = 500
-#cars = cars[0:sample_size]
-#notcars = notcars[0:sample_size]
+sample_size = 500
+cars = cars[0:sample_size]
+notcars = notcars[0:sample_size]
 
 ### TODO: Tweak these parameters and see how the results change.
 colorspaces = ['HSV','RGB', 'HSV', 'LUV','HLS', 'YUV', 'YCrCb']
