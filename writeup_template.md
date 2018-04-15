@@ -19,6 +19,10 @@ The goals / steps of this project are the following:
 [searchgrid_1]: ./output_images/test0_searchgrid_1.jpg
 [searchgrid_2]: ./output_images/test0_searchgrid_2.jpg
 [searchgrid_3]: ./output_images/test0_searchgrid_3.jpg
+[output_1]: ./output_images/test0_output.jpg
+[output_2]: ./output_images/test3_output.jpg
+[output_3]: ./output_images/test4_output.jpg
+[output_4]: ./output_images/test5_output.jpg
 [image5]: ./examples/bboxes_and_heat.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
@@ -89,9 +93,12 @@ Here is a sample for the 256x256 search window.
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+Ultimately I searched on three scales using HSV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
-![alt text][image4]
+![alt text][output_1]
+![alt text][output_2]
+![alt text][output_3]
+![alt text][output_4]
 ---
 
 ### Video Implementation
