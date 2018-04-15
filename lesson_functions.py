@@ -13,27 +13,26 @@ def convert_color(img, conv='RGB2YCrCb'):
 
 
 # Define a function to return HOG features and visualization
-def get_hog_features(img, orient, pix_per_cell, cell_per_block, vis=True,
-                     feature_vec=True):
-
-    """
-    Function accepts params and returns HOG features (optionally flattened) and an optional matrix for
-    visualization. Features will always be the first return (flattened if feature_vector= True).
-    A visualization matrix will be the second return if visualize = True.
-    """
-
-    return_list = hog(img, orientations=orient, pixels_per_cell=(pix_per_cell, pix_per_cell),
+def get_hog_features(img, orient, pix_per_cell, cell_per_block,
+                        vis=False, feature_vec=True):
+    # Call with two outputs if vis==True
+    if vis == True:
+        features, hog_image = hog(img, orientations=orient,
+                                  pixels_per_cell=(pix_per_cell, pix_per_cell),
+                                  block_norm= 'L2-Hys',
                                   cells_per_block=(cell_per_block, cell_per_block),
-                                  block_norm= 'L2-Hys', transform_sqrt=False,
-                                  visualise= vis, feature_vector= feature_vec)
-
-    # name returns explicitly
-    hog_features = return_list[0]
-    if vis:
-        hog_image = return_list[1]
-        return hog_features, hog_image
+                                  transform_sqrt=True,
+                                  visualise=vis, feature_vector=feature_vec)
+        return features, hog_image
+    # Otherwise call with one output
     else:
-        return hog_features
+        features = hog(img, orientations=orient,
+                       pixels_per_cell=(pix_per_cell, pix_per_cell),
+                       cells_per_block=(cell_per_block, cell_per_block),
+                       block_norm= 'L2-Hys',
+                       transform_sqrt=True,
+                       visualise=vis, feature_vector=feature_vec)
+        return features
 
 # Define a function to compute binned color features  
 def bin_spatial(img, size=(32, 32)):
@@ -119,7 +118,7 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
         file_features = single_img_features(image, color_space, spatial_size,
                                             hist_bins, orient, 
                                             pix_per_cell, cell_per_block, hog_channel,
-                                            spatial_feat, hist_feat, hog_feat)
+                                            spatial_feat=spatial_feat, hist_feat=hist_feat, hog_feat=hog_feat)
         features.append(file_features)
         # # apply color conversion if other than 'RGB'
         # if color_space != 'RGB':
