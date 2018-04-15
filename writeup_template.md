@@ -13,7 +13,9 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 [image1]: ./output_images/car_not_car.png
-[image2]: ./output_images/HOG_example.png
+[image2-CH1]: ./output_images/HOG_example-CH1.png
+[image2-CH2]: ./output_images/HOG_example-CH2.png
+[image2-CH3]: ./output_images/HOG_example-CH3.png
 [image3]: ./examples/sliding_windows.jpg
 [image4]: ./examples/sliding_window.jpg
 [image5]: ./examples/bboxes_and_heat.png
@@ -46,7 +48,9 @@ I then explored different color spaces and different `skimage.hog()` parameters 
 Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 
-![alt text][image2]
+![alt text][image2-CH1]
+![alt text][image2-CH2]
+![alt text][image2-CH3]
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
