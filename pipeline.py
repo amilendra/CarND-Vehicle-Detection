@@ -18,7 +18,7 @@ orient = 9  # HOG orientations
 pix_per_cell = 16 # HOG pixels per cell
 cell_per_block = 2 # HOG cells per block
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
-spatial_size = (64, 64) # Spatial binning dimensions
+spatial_size = (32, 32) # Spatial binning dimensions
 hist_bins = 32    # Number of histogram bins
 spatial_feat = True # Spatial features on or off
 hist_feat = True # Histogram features on or off
@@ -100,8 +100,8 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
         #7) If positive (prediction == 1) then save the window
         if prediction == 1:
             #print("Matched", window)
-            if abs( window[0][1] - window[1][1] ) > 50 and abs( window[0][0] - window[1][0] ) > 50:
-                on_windows.append(window)
+            # if abs( window[0][1] - window[1][1] ) > 50 and abs( window[0][0] - window[1][0] ) > 50:
+            on_windows.append(window)
     #8) Return windows for positive detections
     return on_windows
 
