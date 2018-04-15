@@ -18,12 +18,12 @@ orient = 9  # HOG orientations
 pix_per_cell = 16 # HOG pixels per cell
 cell_per_block = 2 # HOG cells per block
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
-spatial_size = (16, 16) # Spatial binning dimensions
-hist_bins = 16    # Number of histogram bins
+spatial_size = (64, 64) # Spatial binning dimensions
+hist_bins = 32    # Number of histogram bins
 spatial_feat = True # Spatial features on or off
 hist_feat = True # Histogram features on or off
 hog_feat = True # HOG features on or off
-x_start_stop = [640, 1280] # Min and max in y to search in slide_window()
+x_start_stop = [790, 1280] # Min and max in y to search in slide_window()
 y_start_stop = [400, 656] # Min and max in y to search in slide_window()
 scale = 1.0
 
@@ -99,8 +99,9 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
         prediction = clf.predict(test_features)
         #7) If positive (prediction == 1) then save the window
         if prediction == 1:
-            print("Matched", window)
-            on_windows.append(window)
+            #print("Matched", window)
+            if abs( window[0][1] - window[1][1] ) > 50 and abs( window[0][0] - window[1][0] ) > 50:
+                on_windows.append(window)
     #8) Return windows for positive detections
     return on_windows
 
@@ -135,9 +136,9 @@ for image in images:
 # The quiz evaluator times out after 13s of CPU time
 #random.shuffle(cars)
 #random.shuffle(notcars)
-sample_size = 500
-cars = cars[0:sample_size]
-notcars = notcars[0:sample_size]
+#sample_size = 500
+#cars = cars[0:sample_size]
+#notcars = notcars[0:sample_size]
 
 car_features = extract_features(cars, color_space=color_space, 
                         spatial_size=spatial_size, hist_bins=hist_bins, 
@@ -210,10 +211,10 @@ def process_image(image):
 
     box_list = []
     #j = 0
-    for xy_window in [(96, 96), (256, 256)]:#, (64, 64), (96, 96), (128, 128)
+    for xy_window in [(64, 64), (96, 96), (256, 256)]:#, (64, 64), (96, 96), (128, 128)
         #j = j + 1
         windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
-                            xy_window=(96, 96), xy_overlap=(0.75, 0.75))
+                            xy_window=xy_window, xy_overlap=(0.75, 0.75))
 
         search_grid_img = draw_boxes(draw_image, windows, color=(255, 0, 0), thick=0) 
         # cv2.imshow("Grid", search_grid_img)
@@ -247,7 +248,7 @@ def process_image(image):
     heat = add_heat(heat,box_list)
         
     # Apply threshold to help remove false positives
-    heat = apply_threshold(heat,2)
+    heat = apply_threshold(heat,5)
 
     # Visualize the heatmap when displaying    
     heatmap = np.clip(heat, 0, 255)
