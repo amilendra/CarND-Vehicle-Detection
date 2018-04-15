@@ -18,7 +18,7 @@ The goals / steps of this project are the following:
 [image2-CH3]: ./output_images/HOG_example-CH3.png
 [searchgrid_1]: ./output_images/test0_searchgrid_1.jpg
 [searchgrid_2]: ./output_images/test0_searchgrid_2.jpg
-[searchgrid_3]: ./output_images/test0_searchgrid_2.jpg
+[searchgrid_3]: ./output_images/test0_searchgrid_3.jpg
 [image5]: ./examples/bboxes_and_heat.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
