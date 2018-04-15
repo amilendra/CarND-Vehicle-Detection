@@ -13,17 +13,17 @@ from scipy.ndimage.measurements import label
 from moviepy.editor import VideoFileClip
 
 ### TODO: Tweak these parameters and see how the results change.
-color_space = 'YCrCb' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb(HLS bit good)
-orient = 12  # HOG orientations
+color_space = 'HLS' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb(HLS bit good)
+orient = 9  # HOG orientations
 pix_per_cell = 16 # HOG pixels per cell
 cell_per_block = 2 # HOG cells per block
-hog_channel = 1 # Can be 0, 1, 2, or "ALL"
+hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
 spatial_size = (16, 16) # Spatial binning dimensions
 hist_bins = 16    # Number of histogram bins
 spatial_feat = True # Spatial features on or off
 hist_feat = True # Histogram features on or off
 hog_feat = True # HOG features on or off
-x_start_stop = [320, 1280] # Min and max in y to search in slide_window()
+x_start_stop = [640, 1280] # Min and max in y to search in slide_window()
 y_start_stop = [400, 656] # Min and max in y to search in slide_window()
 scale = 1.0
 
@@ -79,13 +79,13 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
     for window in windows:
         #3) Extract the test window from original image
         orig_img = img[window[0][1]:window[1][1], window[0][0]:window[1][0]]
-        cv2.imshow("orig_img", orig_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("orig_img", orig_img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
         test_img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))      
-        cv2.imshow("test_img", test_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("test_img", test_img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
         #4) Extract features for that window using single_img_features()
         features = single_img_features(test_img, color_space=color_space, 
                             spatial_size=spatial_size, hist_bins=hist_bins, 
@@ -197,7 +197,7 @@ def process_image(image):
     global i
     #out_img = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
 
-    #cv2.imwrite('input_images/test%d.jpg' % (i),image)
+    cv2.imwrite('input_images/test%d.jpg' % (i),image)
     #i = i + 1
     #return image
     #image = mpimg.imread('test_images/test6.jpg')
@@ -210,25 +210,28 @@ def process_image(image):
 
     box_list = []
     #j = 0
-    #for xy_window in [(32, 32)]:#, (64, 64), (96, 96), (128, 128)
+    for xy_window in [(96, 96), (256, 256)]:#, (64, 64), (96, 96), (128, 128)
         #j = j + 1
-    windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
-                        xy_window=(256, 256), xy_overlap=(0.5, 0.5))
+        windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
+                            xy_window=(96, 96), xy_overlap=(0.75, 0.75))
 
-    search_grid_img = draw_boxes(draw_image, windows, color=(255, 0, 0), thick=0) 
-    cv2.imshow("Grid", search_grid_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        search_grid_img = draw_boxes(draw_image, windows, color=(255, 0, 0), thick=0) 
+        # cv2.imshow("Grid", search_grid_img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
-    canditates = search_windows(image, windows, svc, X_scaler, color_space=color_space, 
-                            spatial_size=spatial_size, hist_bins=hist_bins, 
-                            orient=orient, pix_per_cell=pix_per_cell, 
-                            cell_per_block=cell_per_block, 
-                            hog_channel=hog_channel, spatial_feat=spatial_feat, 
-                            hist_feat=hist_feat, hog_feat=hog_feat)
+        canditates = search_windows(image, windows, svc, X_scaler, color_space=color_space, 
+                                spatial_size=spatial_size, hist_bins=hist_bins, 
+                                orient=orient, pix_per_cell=pix_per_cell, 
+                                cell_per_block=cell_per_block, 
+                                hog_channel=hog_channel, spatial_feat=spatial_feat, 
+                                hist_feat=hist_feat, hog_feat=hog_feat)
 
-    box_list.extend(canditates)
-    #window_img = draw_boxes(draw_image, canditates, color=(0, 0, 255), thick=j)                    
+        box_list.extend(canditates)
+    # window_img = draw_boxes(draw_image, canditates, color=(0, 0, 255), thick=1)                    
+    # cv2.imshow("window_img", window_img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     #print(box_list)
     #cv2.imwrite('pipe_images/window_img%d.jpg' % (i),window_img)
 
@@ -244,7 +247,7 @@ def process_image(image):
     heat = add_heat(heat,box_list)
         
     # Apply threshold to help remove false positives
-    heat = apply_threshold(heat,1)
+    heat = apply_threshold(heat,2)
 
     # Visualize the heatmap when displaying    
     heatmap = np.clip(heat, 0, 255)
@@ -263,35 +266,35 @@ def process_image(image):
 #cv2.waitKey()
 #cv2.destroyAllWindows()
 
-test_images = [
-    # 'cutouts/bbox-example-image.jpg',
-    # 'test_images/test1.jpg',
-    # 'test_images/test2.jpg',
-    # 'test_images/test3.jpg',
-    # 'test_images/test4.jpg',
-    # 'test_images/test5.jpg',
-    # 'test_images/test6.jpg',
-    #'input_images/test215.jpg',
-    'input_images/test304.jpg',
-    # 'input_images/test323.jpg',
-    # 'input_images/test466.jpg',
-    # 'input_images/test989.jpg',
-]
+# test_images = [
+#     # 'cutouts/bbox-example-image.jpg',
+#     # 'test_images/test1.jpg',
+#     # 'test_images/test2.jpg',
+#     # 'test_images/test3.jpg',
+#     # 'test_images/test4.jpg',
+#     # 'test_images/test5.jpg',
+#     # 'test_images/test6.jpg',
+#     'test_images/test215.jpg',
+#     'test_images/test304.jpg',
+#     'test_images/test323.jpg',
+#     'test_images/test466.jpg',
+#     'test_images/test989.jpg',
+# ]
 
-for img in test_images:
-    image = cv2.imread(img)
-    result = process_image(image)
-    cv2.imshow(img, result)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+# for img in test_images:
+#     image = cv2.imread(img)
+#     result = process_image(image)
+#     cv2.imshow(img, result)
+#     cv2.waitKey()
+#     cv2.destroyAllWindows()
 
 # white_output = 'test_video_output.mp4'
 # clip1 = VideoFileClip("test_video.mp4")
 # white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
 # white_clip.write_videofile(white_output, audio=False)
 
-# white_output = 'project_video_output.mp4'
-# clip1 = VideoFileClip("project_video.mp4")
-# white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
-# white_clip.write_videofile(white_output, audio=False)
+white_output = 'project_video_output.mp4'
+clip1 = VideoFileClip("project_video.mp4")
+white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
+white_clip.write_videofile(white_output, audio=False)
 
