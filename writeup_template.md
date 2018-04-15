@@ -16,8 +16,9 @@ The goals / steps of this project are the following:
 [image2-CH1]: ./output_images/HOG_example-CH1.png
 [image2-CH2]: ./output_images/HOG_example-CH2.png
 [image2-CH3]: ./output_images/HOG_example-CH3.png
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
+[searchgrid_1]: ./output_images/test0_searchgrid_1.jpg
+[searchgrid_2]: ./output_images/test0_searchgrid_2.jpg
+[searchgrid_3]: ./output_images/test0_searchgrid_2.jpg
 [image5]: ./examples/bboxes_and_heat.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
@@ -63,10 +64,28 @@ I trained a linear SVM using...
 ### Sliding Window Search
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
+At first, I lazily tried searching throughout the whole image without using the x_start_stop and y_start_stop parameters,
+but this was taking too long. So I used the y_start_stop parameter to exclude the sky from the search area. This gave good results, but there were some false positives,
+where part of middle white lane lines were errorneously being matched as vehicles.
+Because vehicles only appear in the bottom-right quadrant of the image, I tuned x_start_stop so that the mid-line of the road is excluded from the search area.
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+One other trick I used was to use 3 window sizes:64x64, 96x96, 256x256.
+This was done because depending on how far the vehicle is, sometimes the vehicle would not fit within the search window,
+so vehicles were either not being detected at all, or they were being detected only when they appeared in a certain size.
 
-![alt text][image3]
+Because the 256x256 is a fairly large window size, having more overlap between search grids may give better vehicle detection results, so I used a 75% overlap.
+A 50% overlap would have been enough for smaller window sizes, but I did not want to go through the trouble of changing the overlap depending on the window size,
+so I kept it 75% for all window sizes.
+
+Here is a sample for the 64x64 search window.
+![alt text][searchgrid_1]
+
+Here is a sample for the 96x96 search window.
+![alt text][searchgrid_2]
+
+Here is a sample for the 256x256 search window.
+![alt text][searchgrid_3]
+
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
