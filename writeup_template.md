@@ -112,9 +112,8 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
-
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
+I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions. 
+I did not use the suggested method of `scipy.ndimage.measurements.label()` to threshold over multiple frames.
 
 ### Here are four frames and their corresponding heatmaps:
 
@@ -122,14 +121,6 @@ Here's an example result showing the heatmap from a series of frames of video, t
 ![alt text][bboxes_and_heat_2]
 ![alt text][bboxes_and_heat_3]
 ![alt text][bboxes_and_heat_4]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
-
-
 
 ---
 
@@ -139,3 +130,5 @@ Here's an example result showing the heatmap from a series of frames of video, t
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
+Only fairly large vehicles are detected and vehicles that are faraway are not detected. Also I found that sometimes, the white car dissapears when it is passing the white colorish road.
+I see intermittent false positives so one way of improving will be to use `scipy.ndimage.measurements.label()` over a series of frames. However I did not have time to attempt that.
