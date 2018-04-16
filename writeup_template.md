@@ -45,7 +45,7 @@ You're reading it!
 
 #### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
+The code for this step is contained in the first code cell of the IPython notebook `project.ipynb`.
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
@@ -62,11 +62,32 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+When I first started work on this, I did some crude brute force testing and found out that RGB color space gave less than 0.6 accuracy when used without histogram bins or spacial bins. 
+
+I then tried `YCrCb` with all permissible channels, and the results were promising, but for some reason `HLS` was slightly better.
+
+I must admit that these were basically trial and error, and nothing was systematic. While changing color spaces and hog channels, I was changing the windowing mechanisms as explained later, so there may be better parameters than this. But did not have time to explore more and the video is reasonably accurate so stopped at this.
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+I mostly based my work on the functions provided by the lessons.
+Main change I did was to refactor `extract_features` in `lesson_functions.py` so that it used `single_img_features` for its implementation. I did not like the code redundancy. 
+
+I trained a linear SVM using the following parameters.  HOG features, Histogram features, spatial features, all were used. See lines 21 to 33 of `pipeline.py`.
+
+```python
+color_space = 'HLS' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb(HLS bit good)
+orient = 9  # HOG orientations
+pix_per_cell = 16 # HOG pixels per cell
+cell_per_block = 2 # HOG cells per block
+hog_channel = "ALL" # Can be 0, 1, 2, or "ALL"
+spatial_size = (32, 32) # Spatial binning dimensions
+hist_bins = 32    # Number of histogram bins
+spatial_feat = True # Spatial features on or off
+hist_feat = True # Histogram features on or off
+hog_feat = True # HOG features on or off
+```
+Extracting features and the actual training is done between line 115 to 157 of `pipeline.py`.
 
 ### Sliding Window Search
 

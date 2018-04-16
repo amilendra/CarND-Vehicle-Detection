@@ -12,6 +12,11 @@ from lesson_functions import *
 from scipy.ndimage.measurements import label
 from moviepy.editor import VideoFileClip
 
+# NOTE: the next import is only valid for scikit-learn version <= 0.17
+#from sklearn.cross_validation import train_test_split
+# for scikit-learn >= 0.18 use:
+from sklearn.model_selection import train_test_split
+
 ### TODO: Tweak these parameters and see how the results change.
 color_space = 'HLS' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb(HLS bit good)
 orient = 9  # HOG orientations
@@ -26,12 +31,6 @@ hog_feat = True # HOG features on or off
 x_start_stop = [790, 1280] # Min and max in y to search in slide_window()
 y_start_stop = [400, 656] # Min and max in y to search in slide_window()
 scale = 1.0
-
-
-# NOTE: the next import is only valid for scikit-learn version <= 0.17
-#from sklearn.cross_validation import train_test_split
-# for scikit-learn >= 0.18 use:
-from sklearn.model_selection import train_test_split
 
 def add_heat(heatmap, bbox_list):
     # Iterate through list of bboxes
@@ -78,14 +77,7 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
     #2) Iterate over all windows in the list
     for window in windows:
         #3) Extract the test window from original image
-        orig_img = img[window[0][1]:window[1][1], window[0][0]:window[1][0]]
-        # cv2.imshow("orig_img", orig_img)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
         test_img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))      
-        # cv2.imshow("test_img", test_img)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
         #4) Extract features for that window using single_img_features()
         features = single_img_features(test_img, color_space=color_space, 
                             spatial_size=spatial_size, hist_bins=hist_bins, 
@@ -99,26 +91,16 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
         prediction = clf.predict(test_features)
         #7) If positive (prediction == 1) then save the window
         if prediction == 1:
-            #print("Matched", window)
-            # if abs( window[0][1] - window[1][1] ) > 50 and abs( window[0][0] - window[1][0] ) > 50:
             on_windows.append(window)
     #8) Return windows for positive detections
     return on_windows
 
 # Read in cars and notcars
-#images = glob.glob('*.jpeg')
-folder_list = ['vehicles/KITTI_extracted/',
-               'non-vehicles/Extras/']
-folder_list = ['vehicles/GTI_Far/', 'vehicles/GTI_Left/',
-               'vehicles/GTI_MiddleClose/', 'vehicles/GTI_Right/', 
-               'vehicles/KITTI_extracted/',
-               'non-vehicles/Extras/', 'non-vehicles/GTI/']
 folder_list = ['vehicles_smallset/cars1/', 'vehicles_smallset/cars2/', 'vehicles_smallset/cars3/',
                'non-vehicles_smallset/notcars1/', 'non-vehicles_smallset/notcars2/', 'non-vehicles_smallset/notcars3/']
 
 images = []
 for folder in folder_list:
-    print(folder)
     contents = os.listdir(folder)
     images.extend([os.path.join(folder, x) for x in contents if x.endswith('.jpeg')])
 
@@ -129,16 +111,6 @@ for image in images:
         notcars.append(image)
     else:
         cars.append(image)
-
-#print(cars)
-#print(notcars)
-# Reduce the sample size because
-# The quiz evaluator times out after 13s of CPU time
-#random.shuffle(cars)
-#random.shuffle(notcars)
-#sample_size = 500
-#cars = cars[0:sample_size]
-#notcars = notcars[0:sample_size]
 
 car_features = extract_features(cars, color_space=color_space, 
                         spatial_size=spatial_size, hist_bins=hist_bins, 
@@ -152,12 +124,8 @@ notcar_features = extract_features(notcars, color_space=color_space,
                         cell_per_block=cell_per_block, 
                         hog_channel=hog_channel, spatial_feat=spatial_feat, 
                         hist_feat=hist_feat, hog_feat=hog_feat)
-#print(car_features)
-#print(notcar_features)
 # Create an array stack of feature vectors
 X = np.vstack((car_features, notcar_features)).astype(np.float64)
-#X_scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(X)
-#scaled_X = X_scaler.transform(X)
 
 # Define the labels vector
 y = np.hstack((np.ones(len(car_features)), np.zeros(len(notcar_features))))
@@ -193,15 +161,7 @@ print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
 # Check the prediction time for a single sample
 t=time.time()
 
-i = 0
 def process_image(image):
-    global i
-    #out_img = find_cars(img, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
-
-    cv2.imwrite('input_images/test%d.jpg' % (i),image)
-    #i = i + 1
-    #return image
-    #image = mpimg.imread('test_images/test6.jpg')
     draw_image = np.copy(image)
 
     # Uncomment the following line if you extracted training
@@ -210,17 +170,11 @@ def process_image(image):
     #image = image.astype(np.float32)/255
 
     box_list = []
-    #j = 0
     for xy_window in [(64, 64), (96, 96), (256, 256)]:#, (64, 64), (96, 96), (128, 128)
-        #j = j + 1
         windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
                             xy_window=xy_window, xy_overlap=(0.75, 0.75))
 
-        search_grid_img = draw_boxes(draw_image, windows, color=(255, 0, 0), thick=0) 
-        # cv2.imshow("Grid", search_grid_img)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
+        search_grid_img = draw_boxes(draw_image, windows, color=(255, 0, 0), thick=j) 
         canditates = search_windows(image, windows, svc, X_scaler, color_space=color_space, 
                                 spatial_size=spatial_size, hist_bins=hist_bins, 
                                 orient=orient, pix_per_cell=pix_per_cell, 
@@ -229,19 +183,6 @@ def process_image(image):
                                 hist_feat=hist_feat, hog_feat=hog_feat)
 
         box_list.extend(canditates)
-    # window_img = draw_boxes(draw_image, canditates, color=(0, 0, 255), thick=1)                    
-    # cv2.imshow("window_img", window_img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    #print(box_list)
-    #cv2.imwrite('pipe_images/window_img%d.jpg' % (i),window_img)
-
-    #find_cars_img = find_cars(image, y_start_stop[0], y_start_stop[1], 
-    #                          scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
-
-    #cv2.imwrite('pipe_images/find_cars_img%d.jpg' % (i),find_cars_img)
-    #plt.imshow(window_img)
-    #plt.show()
 
     heat = np.zeros_like(image[:,:,0]).astype(np.float)
     # Add heat to each box in box list
@@ -257,42 +198,7 @@ def process_image(image):
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(image), labels)
 
-    cv2.imwrite('pipe_images/test%d.jpg' % (i),draw_img)
-    i = i + 1
     return draw_img
-
-#img = cv2.imread('test_images/test6.jpg')
-#curved = process_image(img)
-#cv2.imshow("output_images/with_radius_test3.jpg", curved)
-#cv2.waitKey()
-#cv2.destroyAllWindows()
-
-# test_images = [
-#     # 'cutouts/bbox-example-image.jpg',
-#     # 'test_images/test1.jpg',
-#     # 'test_images/test2.jpg',
-#     # 'test_images/test3.jpg',
-#     # 'test_images/test4.jpg',
-#     # 'test_images/test5.jpg',
-#     # 'test_images/test6.jpg',
-#     'test_images/test215.jpg',
-#     'test_images/test304.jpg',
-#     'test_images/test323.jpg',
-#     'test_images/test466.jpg',
-#     'test_images/test989.jpg',
-# ]
-
-# for img in test_images:
-#     image = cv2.imread(img)
-#     result = process_image(image)
-#     cv2.imshow(img, result)
-#     cv2.waitKey()
-#     cv2.destroyAllWindows()
-
-# white_output = 'test_video_output.mp4'
-# clip1 = VideoFileClip("test_video.mp4")
-# white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
-# white_clip.write_videofile(white_output, audio=False)
 
 white_output = 'project_video_output.mp4'
 clip1 = VideoFileClip("project_video.mp4")
