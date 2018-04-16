@@ -29,7 +29,7 @@ The goals / steps of this project are the following:
 [bboxes_and_heat_4]: ./output_images/bboxes_and_heat_4.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
-[video1]: ./project_video.mp4
+[video1]: ./project_video_output.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
