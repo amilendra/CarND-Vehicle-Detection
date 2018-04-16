@@ -151,5 +151,8 @@ I did not use the suggested method of `scipy.ndimage.measurements.label()` to th
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
-Only fairly large vehicles are detected and vehicles that are faraway are not detected. Also I found that sometimes, the white car dissapears when it is passing the white colorish road.
-I see intermittent false positives so one way of improving will be to use `scipy.ndimage.measurements.label()` over a series of frames. However I did not have time to attempt that.
+As explained previously, using search windows of varying scales helped a lot in improving accuracy. Restricting the image search area also helped reducing false positives, but I am not sure if that is practical in real life. Thankfully, there were no vehicles right in front of of the same lane, or there weren't any vechiles coming towards me from the left hand side of the road so this pipeline works only for this particluar case. A more general solution would be good to have.
+
+Although it improves accuracy, iteratively searching through search windows of multiple sizes, makes the processing time of the pipeline very long. The whole video took abot 1 hour to process, which may not be good as a real time vehicle detection system.
+
+Only fairly large vehicles are detected and vehicles that are faraway are not detected. Also I found that sometimes, the white car dissapears when it is passing the white colorish road. I also see intermittent false positives so one way of improving will be to use `scipy.ndimage.measurements.label()` over a series of frames. However I did not have time to attempt that.
