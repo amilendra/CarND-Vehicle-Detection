@@ -23,7 +23,10 @@ The goals / steps of this project are the following:
 [output_2]: ./output_images/test3_output.jpg
 [output_3]: ./output_images/test4_output.jpg
 [output_4]: ./output_images/test5_output.jpg
-[image5]: ./examples/bboxes_and_heat.png
+[bboxes_and_heat_1]: ./output_images/bboxes_and_heat_1.png
+[bboxes_and_heat_2]: ./output_images/bboxes_and_heat_2.png
+[bboxes_and_heat_3]: ./output_images/bboxes_and_heat_3.png
+[bboxes_and_heat_4]: ./output_images/bboxes_and_heat_4.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
 [video1]: ./project_video.mp4
@@ -113,9 +116,12 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 
 Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
-### Here are six frames and their corresponding heatmaps:
+### Here are four frames and their corresponding heatmaps:
 
-![alt text][image5]
+![alt text][bboxes_and_heat_1]
+![alt text][bboxes_and_heat_2]
+![alt text][bboxes_and_heat_3]
+![alt text][bboxes_and_heat_4]
 
 ### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
 ![alt text][image6]
