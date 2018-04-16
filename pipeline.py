@@ -30,7 +30,6 @@ hist_feat = True # Histogram features on or off
 hog_feat = True # HOG features on or off
 x_start_stop = [790, 1280] # Min and max in y to search in slide_window()
 y_start_stop = [400, 656] # Min and max in y to search in slide_window()
-scale = 1.0
 
 def add_heat(heatmap, bbox_list):
     # Iterate through list of bboxes
@@ -173,8 +172,6 @@ def process_image(image):
     for xy_window in [(64, 64), (96, 96), (256, 256)]:#, (64, 64), (96, 96), (128, 128)
         windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
                             xy_window=xy_window, xy_overlap=(0.75, 0.75))
-
-        search_grid_img = draw_boxes(draw_image, windows, color=(255, 0, 0), thick=j) 
         canditates = search_windows(image, windows, svc, X_scaler, color_space=color_space, 
                                 spatial_size=spatial_size, hist_bins=hist_bins, 
                                 orient=orient, pix_per_cell=pix_per_cell, 
